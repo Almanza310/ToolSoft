@@ -1,0 +1,133 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #dffcf3, #f1fff8); /* Fondo gradiente igual que products.php */
+    min-height: 100vh;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #ffffff; /* Fondo blanco igual que products.php */
+    border-bottom: 1px solid #ddd; /* Borde inferior igual que products.php */
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+.logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #2ecc71; /* Color del logo igual que products.php */
+}
+nav {
+    display: flex;
+    align-items: center;
+}
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333; /* Color del texto igual que products.php */
+    font-weight: 500;
+}
+nav a:hover {
+    color: #2ecc71; /* Color de hover igual que products.php */
+}
+.cart-container {
+    margin: 80px 20px 20px; /* Margen superior para dejar espacio al header fijo */
+    padding: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white; /* Fondo blanco igual que las tarjetas de products.php */
+    border-radius: 15px; /* Bordes redondeados igual que products.php */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra igual que products.php */
+}
+.cart-title {
+    font-size: 1.8rem;
+    color: #2ecc71; /* Color del título igual que products.php */
+    text-align: center;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #2ecc71; /* Fondo de los encabezados igual que el verde de products.php */
+    color: white;
+}
+td img {
+    width: 50px;
+    height: auto;
+    max-height: 50px;
+    object-fit: contain;
+}
+.remove-btn {
+    background-color: #2ecc71; /* Botón de eliminar con el mismo verde que products.php */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.remove-btn:hover {
+    background-color: #27ae60; /* Color de hover igual que los botones de products.php */
+}
+.total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2ecc71; /* Color del total igual que products.php */
+    text-align: right;
+    margin-top: 10px;
+}
+.empty-cart {
+    font-size: 1.1rem;
+    color: #666;
+    text-align: center;
+}
+.cart-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+.checkout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2ecc71; /* Mismo verde que los botones de products.php */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+.checkout-btn:hover {
+    background-color: #27ae60; /* Mismo hover que los botones de products.php */
+}
+@media (max-width: 768px) {
+    .cart-container {
+        margin: 80px 10px 10px;
+        padding: 15px;
+    }
+    th, td {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+    td img {
+        width: 40px;
+        max-height: 40px;
+    }
+    .checkout-btn {
+        font-size: 1em;
+        padding: 8px 15px;
+    }
+}

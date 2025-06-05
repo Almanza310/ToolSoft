@@ -1,0 +1,261 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #dffcf3, #f1fff8);
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #2ecc71;
+    color: white;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    box-shadow: 2px 0 24px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure sidebar is above content */
+}
+
+.sidebar h3 {
+    font-size: 1.5rem;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 0;
+    font-weight: 500;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #27ae60;
+}
+
+.sidebar a.active {
+    background-color: #27ae60;
+    font-weight: 600;
+}
+
+/* Content Styling */
+.content {
+    margin-left: 250px; /* Match sidebar width */
+    padding: 30px;
+    width: calc(100% - 250px); /* Ensure content takes remaining space */
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin: 20px 20px 20px 270px; /* Adjust margins to avoid overlap */
+    min-height: calc(100vh - 40px); /* Ensure full height minus margins */
+    box-sizing: border-box;
+}
+
+.content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+/* User Form Styling */
+.user-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 30px;
+    justify-content: space-between; /* Distribute items evenly */
+}
+
+.user-form input,
+.user-form select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    flex: 1 1 200px; /* Allow inputs to grow but with a minimum width */
+    max-width: 250px; /* Prevent inputs from becoming too wide */
+}
+
+.user-form button {
+    padding: 12px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+    flex: 0 1 auto; /* Button doesn't grow */
+}
+
+.user-form button:hover {
+    background-color: #27ae60;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: auto; /* Allow table to adjust column widths */
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word; /* Prevent text overflow */
+}
+
+th {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: 500;
+}
+
+td {
+    color: #333;
+}
+
+tr:hover {
+    background-color: #f1fff8;
+}
+
+.actions a {
+    padding: 8px 15px;
+    text-decoration: none;
+    color: white;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    transition: opacity 0.3s ease;
+    display: inline-block; /* Ensure buttons align properly */
+}
+
+.edit-btn {
+    background-color: #2ecc71;
+}
+
+.edit-btn:hover {
+    background-color: #27ae60;
+}
+
+.delete-btn {
+    background-color: #d63031;
+}
+
+.delete-btn:hover {
+    opacity: 0.9;
+}
+
+/* Message Styling */
+.message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.message.error {
+    background-color: #d63031;
+    color: white;
+}
+
+/* Footer Styling */
+.footer {
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
+    margin-top: 30px;
+    font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+
+    .sidebar h3 {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .sidebar a {
+        padding: 10px;
+        font-size: 0;
+        text-align: center;
+    }
+
+    .content {
+        margin-left: 60px;
+        margin: 20px;
+        width: calc(100% - 100px);
+        padding: 15px;
+    }
+
+    .user-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .user-form input,
+    .user-form select,
+    .user-form button {
+        width: 100%;
+        max-width: 100%;
+        flex: 1 1 100%;
+        margin-bottom: 10px;
+    }
+
+    th, td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        margin: 10px;
+        width: calc(100% - 80px);
+        padding: 10px;
+    }
+
+    th, td {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+}

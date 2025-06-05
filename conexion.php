@@ -1,5 +1,4 @@
 <?php
-// conexion.php
 $host = 'localhost';
 $dbname = 'prototipo';
 $username = 'root';

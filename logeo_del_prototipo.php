@@ -1,32 +1,99 @@
 <?php
 require_once 'conexion.php';
+session_start();
+
+// Security headers
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header("X-XSS-Protection: 1; mode=block");
+header("Content-Security-Policy: default-src 'self'");
+
+// Regenerate session ID
+session_regenerate_id(true);
+
+// Session timeout (30 minutes)
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
+    session_unset();
+    session_destroy();
+    header('Location: logeo_del_prototipo.php');
+    exit;
+}
+$_SESSION['last_activity'] = time();
+
+// CSRF Token generation
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $mensaje = '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    $stmt = $conexion->prepare("SELECT password, name FROM Customer WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        if ($password === $fila['password']) { // Direct comparison for plaintext
-            $mensaje = "✅ Bienvenido, " . htmlspecialchars($fila['name']);
-        } else {
-            $mensaje = "❌ Contraseña incorrecta.";
-        }
+    // Validate CSRF token
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $mensaje = "❌ Error de seguridad: Token CSRF inválido.";
+        error_log("CSRF token validation failed");
     } else {
-        $mensaje = "❌ Usuario no encontrado.";
+        // Sanitize email input
+        $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $mensaje = "❌ Correo electrónico inválido.";
+            error_log("Invalid email: $email");
+        } else {
+            $password = trim($_POST['password'] ?? '');
+            error_log("Login attempt: Email = $email, Password = $password");
+
+            // Check Users table
+            $stmt = $conexion->prepare("SELECT name, password, role FROM Users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+                error_log("User found: Name = " . $user['name'] . ", Role = " . $user['role'] . ", Stored Password = " . $user['password']);
+
+                if ($password === $user['password']) {
+                    error_log("Login successful: Role = " . $user['role'] . ", Name = " . $user['name']);
+                    if (strtolower($user['role']) === 'administrator') {
+                        $_SESSION['admin_logged_in'] = true;
+                        $_SESSION['admin_name'] = $user['name'];
+                        $redirect = 'admin_dashboard.php';
+                        error_log("Setting session: admin_logged_in = true, admin_name = " . $user['name']);
+                        error_log("Redirecting to admin_dashboard.php for user: " . $user['name']);
+                    } else {
+                        $_SESSION['customer_logged_in'] = true;
+                        $_SESSION['customer_name'] = $user['name'];
+                        if (isset($_SESSION['redirect_after_login'])) {
+                            $redirect = $_SESSION['redirect_after_login'];
+                            unset($_SESSION['redirect_after_login']);
+                        } else {
+                            $redirect = 'interfaz_prototipo.php';
+                        }
+                        error_log("Setting session: customer_logged_in = true, customer_name = " . $user['name']);
+                        error_log("Redirecting to $redirect for user: " . $user['name']);
+                    }
+                    error_log("Session state before redirect: " . print_r($_SESSION, true));
+                    session_regenerate_id(true);
+                    $stmt->close();
+                    if (headers_sent()) {
+                        error_log("Headers already sent, using JavaScript redirect to $redirect");
+                        echo "<script>window.location.href='$redirect';</script>";
+                        exit;
+                    }
+                    header("Location: $redirect");
+                    exit;
+                } else {
+                    $mensaje = "❌ Contraseña incorrecta.";
+                    error_log("Password mismatch: Entered = $password, Stored = " . $user['password']);
+                }
+            } else {
+                $mensaje = "❌ Usuario no encontrado.";
+                error_log("No user found for email: $email");
+            }
+            $stmt->close();
+        }
     }
-
-    $stmt->close();
 }
-
-$conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -34,127 +101,14 @@ $conexion->close();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🛠 ToolSoft</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to right, #dffcf3, #f1fff8);
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      background-color: #ffffff;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .logo {
-      font-weight: bold;
-      font-size: 1.5rem;
-      color: #2ecc71;
-    }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      color: #2ecc71;
-    }
-
-    .container {
-      text-align: center;
-      padding: 2.5rem;
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-      margin: 60px auto;
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .logo {
-      font-size: 2.2rem;
-      font-weight: bold;
-      color: #2ecc71;
-      margin-bottom: 1rem;
-    }
-
-    .description {
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 2rem;
-    }
-
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #2ecc71;
-      color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #27ae60;
-    }
-
-    .message {
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      color: #d63031;
-    }
-
-    .register {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #2ecc71;
-      cursor: pointer;
-    }
-
-    .footer {
-      font-size: 0.8rem;
-      color: #666;
-      margin-top: 1.5rem;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        margin: 40px 20px;
-        padding: 2rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="CSS/styleslogeo.css">
 </head>
 <body>
   <header>
     <div class="logo">🛠 ToolSoft</div>
     <nav>
       <a href="interfaz_prototipo.php">Inicio</a>
-      <a href="#">Productos</a>
+      <a href="customer_products.php">Productos</a>
       <a href="contacto.php">Contacto</a>
     </nav>
   </header>
@@ -163,14 +117,15 @@ $conexion->close();
     <div class="logo">🛠 Login</div>
     <div class="description">
       Bienvenido a ToolSoft, tu ferretería de confianza.<br/>
-      Inicia sesión para acceder a tu cuenta.
+      Inicia sesión para acceder a tu cuenta (Administrador o Cliente).
     </div>
 
     <?php if ($mensaje): ?>
-      <div class="message"><?php echo $mensaje; ?></div>
+      <div class="message"><?php echo htmlspecialchars($mensaje); ?></div>
     <?php endif; ?>
 
     <form action="" method="post">
+      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>" />
       <input type="email" name="email" placeholder="Correo electrónico" required />
       <input type="password" name="password" placeholder="Contraseña" required />
       <button type="submit">Iniciar sesión</button>
@@ -181,5 +136,22 @@ $conexion->close();
       ToolSoft © 2025 - Todos los derechos reservados.
     </div>
   </div>
+
+  <script>
+    // Restore redirect URL from sessionStorage if it exists
+    window.addEventListener('load', function() {
+        const redirectUrl = sessionStorage.getItem('redirect_after_login');
+        if (redirectUrl) {
+            <?php
+            // Set the redirect URL in the session if it came from sessionStorage
+            if (!isset($_SESSION['redirect_after_login'])) {
+                echo "sessionStorage.removeItem('redirect_after_login');";
+                echo "window.location.href = redirectUrl;";
+            }
+            ?>
+        }
+    });
+  </script>
 </body>
 </html>
+<?php $conexion->close(); ?>
