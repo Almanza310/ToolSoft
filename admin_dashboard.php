@@ -82,7 +82,8 @@ if ($active_tab === 'proveedores' && $edit_supplier) {
         <a href="admin_dashboard.php?tab=usuarios" class="<?php echo $active_tab === 'usuarios' ? 'active' : ''; ?>">Usuarios</a>
         <a href="admin_dashboard.php?tab=categorias" class="<?php echo $active_tab === 'categorias' ? 'active' : ''; ?>">Categorías</a>
         <a href="admin_dashboard.php?tab=proveedores" class="<?php echo $active_tab === 'proveedores' ? 'active' : ''; ?>">Proveedores</a>
-        <a href="admin_dashboard.php?tab=sales" class="<?php echo $active_tab === 'sales' ? 'active' : ''; ?>">Ventas</a>
+        <a href="admin_dashboard.php?tab=sales" class="<?php echo $active_tab === 'sales' ? 'active' : ''; ?>">Productos</a>
+        <a href="admin_dashboard.php?tab=ventas" class="<?php echo $active_tab === 'ventas' ? 'active' : ''; ?>">Historial Ventas</a>
         <a href="#">Pagos</a>
         <a href="#">Facturas</a>
         <a href="#">Cooperativas</a>
@@ -101,6 +102,8 @@ if ($active_tab === 'proveedores' && $edit_supplier) {
             <?php include 'admin/suppliers.php'; ?>
         <?php elseif ($active_tab === 'sales'): ?>
             <?php include 'admin/products.php'; ?>
+        <?php elseif ($active_tab === 'ventas'): ?>
+            <?php include 'admin/sales_history.php'; ?>
         <?php endif; ?>
         <!-- Display Success/Error Messages -->
         <?php if ($success_message): ?>

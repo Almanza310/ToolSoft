@@ -39,20 +39,45 @@ if ($conexion->connect_error) {
     error_log("Conexión a la base de datos exitosa");
 }
 
-// Fetch available products (stock > 0), including the image field
-$result_products = $conexion->query("SELECT id, name, description, price, stock, image FROM product ORDER BY stock > 0 DESC, name ASC");
+// CONSULTA MEJORADA: Usar DISTINCT para evitar duplicados y solo mostrar productos con stock > 0
+$result_products = $conexion->query("
+    SELECT DISTINCT id, name, description, price, stock, 
+           COALESCE(image, 'imagenes/placeholder.jpg') as image 
+    FROM product 
+    WHERE stock > 0 
+    ORDER BY name ASC
+");
+
 if ($result_products === false) {
     error_log("Error al ejecutar la consulta: " . $conexion->error);
     die("Error al ejecutar la consulta: " . $conexion->error);
 }
-$products = $result_products->fetch_all(MYSQLI_ASSOC);
-error_log("Productos recuperados: " . print_r($products, true));
 
-// Set default image if the 'image' column is null
-foreach ($products as &$product) {
-    $product['image'] = !empty($product['image']) ? $product['image'] : 'imagenes/placeholder.jpg';
-    error_log("Producto procesado: " . print_r($product, true));
+$products = $result_products->fetch_all(MYSQLI_ASSOC);
+error_log("Productos únicos recuperados: " . count($products));
+
+// FILTRO ADICIONAL: Verificar duplicados en el array por si acaso
+$unique_products = [];
+$seen_ids = [];
+
+foreach ($products as $product) {
+    if (!in_array($product['id'], $seen_ids)) {
+        // Asegurar que la imagen tenga una ruta válida
+        if (empty($product['image']) || $product['image'] === null) {
+            $product['image'] = 'imagenes/placeholder.jpg';
+        }
+        $unique_products[] = $product;
+        $seen_ids[] = $product['id'];
+    } else {
+        error_log("Producto duplicado detectado y eliminado: ID " . $product['id']);
+    }
 }
+
+$products = $unique_products;
+error_log("Productos después de filtro de duplicados: " . count($products));
+
+// Agregar comentario HTML para debug
+echo "<!-- Debug: Encontrados " . count($products) . " productos únicos con stock > 0 -->";
 ?>
 
 <!DOCTYPE html>
@@ -89,19 +114,21 @@ foreach ($products as &$product) {
             <?php
             $product_count = 0;
             if (empty($products)) {
-                echo '<p>No se encontraron productos con stock mayor a 0.</p>';
+                echo '<p>No se encontraron productos disponibles en este momento.</p>';
                 error_log("No se encontraron productos para renderizar.");
             } else {
                 foreach ($products as $index => $product) {
                     $product_id = $product['id'];
-                    error_log("Producto en índice $index - ID $product_id: " . print_r($product, true));
+                    error_log("Renderizando producto único - ID $product_id: {$product['name']}");
+                    
                     $add_to_cart_url = "cart.php?action=add&name=" . urlencode($product['name']) . "&price=" . urlencode($product['price']) . "&image=" . urlencode($product['image']);
-                    error_log("Add to cart URL for product {$product['name']}: $add_to_cart_url");
                     $is_logged_in = isset($_SESSION['customer_logged_in']);
-                    error_log("User logged in: " . ($is_logged_in ? "Yes" : "No"));
             ?>
-                <div class="product-card">
-                    <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image" />
+                <div class="product-card" data-product-id="<?php echo $product_id; ?>">
+                    <img src="<?php echo htmlspecialchars($product['image']); ?>" 
+                         alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                         class="product-image" 
+                         onerror="this.src='imagenes/placeholder.jpg'" />
                     <div class="product-name"><?php echo htmlspecialchars($product['name']); ?></div>
                     <div class="product-price">$<?php echo number_format($product['price'], 2); ?></div>
                     <div class="product-stock">Stock: <?php echo htmlspecialchars($product['stock']); ?></div>
@@ -116,9 +143,10 @@ foreach ($products as &$product) {
                     $product_count++;
                 }
             }
-            error_log("Total productos renderizados: $product_count");
+            error_log("Total productos únicos renderizados: $product_count");
             ?>
         </div>
+        
         <?php if (empty($products)): ?>
             <p class="no-products">No hay productos disponibles en este momento.</p>
         <?php endif; ?>
@@ -133,6 +161,17 @@ foreach ($products as &$product) {
             <?php $_SESSION['error_message'] = ''; ?>
         <?php endif; ?>
     </div>
+
+    <!-- Auto-refresh para ver nuevos productos (opcional) -->
+    <script>
+        // Auto-refresh cada 60 segundos para ver nuevos productos
+        setTimeout(function() {
+            location.reload();
+        }, 60000);
+        
+        // Debug: Mostrar productos cargados en consola
+        console.log('Productos cargados:', <?php echo $product_count; ?>);
+    </script>
 </body>
 </html>
 <?php $conexion->close(); ?>

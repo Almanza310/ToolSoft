@@ -1,0 +1,342 @@
+.sales-history-management {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card.customer-sales .stat-icon {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.stat-card.customer-profit .stat-icon {
+    background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.stat-card.supplier-purchases .stat-icon {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.stat-card.potential-profit .stat-icon {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.stat-icon {
+    font-size: 40px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+}
+
+.stat-info h3 {
+    margin: 0 0 5px 0;
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-value.profit {
+    color: #27ae60;
+}
+
+.stat-value.cost {
+    color: #e67e22;
+}
+
+.stat-value.potential {
+    color: #9b59b6;
+}
+
+.form-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.form-section h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 3px solid #e67e22;
+    padding-bottom: 10px;
+}
+
+.purchase-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+}
+
+.purchase-form select,
+.purchase-form input {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.purchase-form select:focus,
+.purchase-form input:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+}
+
+.total-preview {
+    padding: 12px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e67e22;
+    text-align: center;
+}
+
+.purchase-btn {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.purchase-btn:hover {
+    background: linear-gradient(135deg, #d35400, #c0392b);
+    transform: translateY(-2px);
+}
+
+.purchase-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.table-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.table-section h3 {
+    margin-top: 0;
+    color: #333;
+    padding-bottom: 10px;
+}
+
+.table-section:nth-of-type(3) h3 {
+    border-bottom: 3px solid #3498db;
+}
+
+.table-section:nth-of-type(4) h3 {
+    border-bottom: 3px solid #e67e22;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.sales-table,
+.purchases-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.sales-table th,
+.sales-table td,
+.purchases-table th,
+.purchases-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sales-table th {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    font-weight: 600;
+}
+
+.purchases-table th {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    color: white;
+    font-weight: 600;
+}
+
+.sales-table tr:hover,
+.purchases-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.sale-id,
+.purchase-id {
+    font-weight: 700;
+    color: #3498db;
+}
+
+.customer-info strong,
+.supplier-info strong {
+    color: #2c3e50;
+}
+
+.customer-info small,
+.supplier-info small {
+    color: #666;
+}
+
+.products-list {
+    max-width: 200px;
+    font-size: 14px;
+    color: #666;
+}
+
+.sale-total,
+.total-cost,
+.unit-price,
+.sale-price {
+    font-weight: 600;
+    text-align: right;
+}
+
+.sale-total {
+    color: #27ae60;
+}
+
+.total-cost,
+.unit-price {
+    color: #e67e22;
+}
+
+.profit,
+.potential-profit {
+    font-weight: 600;
+    color: #27ae60;
+    text-align: right;
+}
+
+.cost {
+    font-weight: 600;
+    color: #e67e22;
+    text-align: right;
+}
+
+.margin {
+    font-weight: 600;
+    color: #8e44ad;
+    text-align: center;
+}
+
+.quantity {
+    text-align: center;
+    font-weight: 600;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-state p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+    .sales-history-management {
+        padding: 10px;
+    }
+    
+    .stats-dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-section,
+    .table-section {
+        padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .sales-table,
+    .purchases-table {
+        font-size: 14px;
+    }
+    
+    .sales-table th,
+    .sales-table td,
+    .purchases-table th,
+    .purchases-table td {
+        padding: 8px;
+    }
+    
+    .products-list {
+        max-width: 150px;
+    }
+}

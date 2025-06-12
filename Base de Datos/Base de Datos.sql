@@ -29,7 +29,7 @@ CREATE TABLE `categories` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,10 +84,13 @@ CREATE TABLE `product` (
   `price` decimal(8,2) DEFAULT NULL,
   `stock` int DEFAULT NULL,
   `image` varchar(255) DEFAULT 'imagenes/placeholder.jpg',
+  `supplier_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_product_category` (`category_id`),
-  CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `supplier_id` (`supplier_id`),
+  CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `product_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +120,7 @@ CREATE TABLE `sale` (
   KEY `sale_admin_id_foreign` (`admin_id`),
   CONSTRAINT `sale_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `sale_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +150,7 @@ CREATE TABLE `saledetail` (
   KEY `saledetail_product_id_foreign` (`product_id`),
   CONSTRAINT `saledetail_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `saledetail_sale_id_foreign` FOREIGN KEY (`sale_id`) REFERENCES `sale` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,6 +160,39 @@ CREATE TABLE `saledetail` (
 LOCK TABLES `saledetail` WRITE;
 /*!40000 ALTER TABLE `saledetail` DISABLE KEYS */;
 /*!40000 ALTER TABLE `saledetail` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `supplier_purchases`
+--
+
+DROP TABLE IF EXISTS `supplier_purchases`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `supplier_purchases` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `supplier_id` int NOT NULL,
+  `product_id` bigint NOT NULL,
+  `quantity` int NOT NULL,
+  `purchase_price` decimal(10,2) NOT NULL,
+  `total_cost` decimal(10,2) NOT NULL,
+  `purchase_date` datetime NOT NULL,
+  `admin_id` int DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `idx_supplier_id` (`supplier_id`),
+  KEY `idx_product_id` (`product_id`),
+  CONSTRAINT `fk_supplier_purchases_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_supplier_purchases_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `supplier_purchases`
+--
+
+LOCK TABLES `supplier_purchases` WRITE;
+/*!40000 ALTER TABLE `supplier_purchases` DISABLE KEYS */;
+/*!40000 ALTER TABLE `supplier_purchases` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -177,7 +213,7 @@ CREATE TABLE `suppliers` (
   UNIQUE KEY `email` (`email`),
   KEY `fk_suppliers_category` (`category_id`),
   CONSTRAINT `fk_suppliers_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +241,7 @@ CREATE TABLE `users` (
   `address` varchar(255) DEFAULT NULL,
   `role` enum('customer','administrator') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,4 +262,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-05  0:55:51
+-- Dump completed on 2025-06-12  1:56:28
