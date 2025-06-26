@@ -8,7 +8,7 @@
 html, body {
     height: 100%;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal overflow */
+    /* overflow-x: hidden;  Quitar esto para permitir scroll horizontal si es necesario */
 }
 
 body {
@@ -168,11 +168,21 @@ tr:hover {
 }
 
 .delete-btn {
-    background-color: #d63031;
+    background: #e74c3c;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.2s;
+    border: none;
+    display: inline-block;
 }
 
 .delete-btn:hover {
-    opacity: 0.9;
+    background: #c0392b;
+    color: #fff;
 }
 
 /* Message Styling */
@@ -258,4 +268,86 @@ tr:hover {
         font-size: 0.8rem;
         padding: 8px;
     }
+}
+
+.main-content {
+    background: white;
+    padding: 30px;
+    margin: 30px auto;
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-height: calc(100vh - 140px);
+    width: 95vw;
+    max-width: 1200px;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.payments-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.payments-table thead tr th:first-child {
+    border-top-left-radius: 14px;
+}
+.payments-table thead tr th:last-child {
+    border-top-right-radius: 14px;
+}
+.payments-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 14px;
+}
+.payments-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 14px;
+}
+
+.export-btn {
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.2s;
+    box-shadow: 0 1px 4px rgba(44,204,113,0.08);
+    border: none;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.export-btn:hover {
+    background: #27ae60;
+    color: #fff;
+}
+
+.clear-link {
+    background: #fff !important;
+    color: #2ecc71 !important;
+    border: 2px solid #2ecc71 !important;
+    border-radius: 8px !important;
+    padding: 10px 22px !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    text-decoration: none !important;
+    transition: background 0.2s, color 0.2s !important;
+    margin-left: 10px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    box-shadow: 0 1px 4px rgba(44,204,113,0.08) !important;
+    appearance: none !important;
+    outline: none !important;
+}
+.clear-link:hover {
+    background: #2ecc71 !important;
+    color: #fff !important;
+    text-decoration: none !important;
 }

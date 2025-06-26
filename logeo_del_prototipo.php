@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $redirect = $_SESSION['redirect_after_login'];
                             unset($_SESSION['redirect_after_login']);
                         } else {
-                            $redirect = 'customer_dashboard.php';
+                            $redirect = 'customer_products.php';
                         }
                         error_log("Setting customer session: customer_logged_in = true, customer_name = " . $user['name'] . ", customer_id = " . $user['id']);
                     }
@@ -124,56 +124,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </nav>
   </header>
 
-  <div class="container">
-    <div class="login-box">
-      <div class="logo">🛠 Login</div>
-      <div class="description">
-        Bienvenido a ToolSoft, tu ferretería de confianza.<br/>
-        Inicia sesión para acceder a tu cuenta.
+  <main class="login-main">
+    <section class="login-card">
+      <div class="login-card-header">
+        <span class="login-icon">🔒</span>
+        <h2>Iniciar Sesión</h2>
+        <p class="login-desc">Bienvenido a <b>ToolSoft</b>, tu ferretería de confianza.<br>Accede a tu cuenta para comprar y gestionar tus pedidos.</p>
       </div>
-
       <?php if ($mensaje): ?>
-        <div class="message"><?php echo htmlspecialchars($mensaje); ?></div>
+        <div class="message error-message"><?php echo htmlspecialchars($mensaje); ?></div>
       <?php endif; ?>
-
-      <form action="" method="post">
+      <form action="" method="post" class="login-form">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>" />
-        <input type="email" name="email" placeholder="📧 Correo electrónico" required />
-        <input type="password" name="password" placeholder="🔒 Contraseña" required />
-        <button type="submit">🚀 Iniciar sesión</button>
+        <div class="input-group">
+          <span class="input-icon">📧</span>
+          <input type="email" name="email" placeholder="Correo electrónico" required />
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🔑</span>
+          <input type="password" name="password" placeholder="Contraseña" required />
+        </div>
+        <button type="submit" class="login-btn">🚀 Iniciar sesión</button>
       </form>
-
       <div class="register">
         ¿No tienes cuenta? <a href="customer_register.php">Regístrate aquí</a>.
       </div>
-      <div class="footer">
-        ToolSoft © 2025 - Todos los derechos reservados.
-      </div>
-    </div>
-  </div>
+    </section>
+  </main>
+
+  <footer class="login-footer">
+    ToolSoft © 2025 - Todos los derechos reservados.
+  </footer>
 
   <script>
-    // Restore redirect URL from sessionStorage if it exists
-    window.addEventListener('load', function() {
-        const redirectUrl = sessionStorage.getItem('redirect_after_login');
-        if (redirectUrl) {
-            <?php
-            // Set the redirect URL in the session if it came from sessionStorage
-            if (!isset($_SESSION['redirect_after_login'])) {
-                echo "sessionStorage.removeItem('redirect_after_login');";
-                echo "window.location.href = redirectUrl;";
-            }
-            ?>
-        }
-    });
-
     // Add loading state to button
     document.querySelector('form').addEventListener('submit', function() {
         const button = document.querySelector('button[type="submit"]');
         button.textContent = '⏳ Iniciando sesión...';
         button.disabled = true;
     });
-
     // Clear form messages after 5 seconds
     setTimeout(function() {
         const message = document.querySelector('.message');

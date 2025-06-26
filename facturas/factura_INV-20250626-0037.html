@@ -1,0 +1,134 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Factura #INV-20250626-0037</title>
+        <style>
+            body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #f6f8fa; }
+            .invoice-box { max-width: 750px; margin: 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(46,204,113,0.10); padding: 36px 32px 28px 32px; }
+            .header {
+                background: #2ecc71;
+                color: #fff;
+                padding: 18px 32px;
+                border-radius: 10px 10px 0 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .header .logo {
+                font-size: 2.1rem;
+                font-weight: bold;
+                letter-spacing: 1px;
+                font-family: Arial Black, Arial, sans-serif;
+            }
+            .header .invoice-info {
+                text-align: right;
+                font-size: 1rem;
+            }
+            .info-section {
+                display: flex;
+                justify-content: space-between;
+                margin: 30px 0 18px 0;
+                font-size: 1rem;
+            }
+            .info-box {
+                width: 48%;
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 16px 18px;
+                color: #333;
+            }
+            .info-title {
+                font-weight: bold;
+                color: #2ecc71;
+                margin-bottom: 6px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 18px;
+            }
+            th {
+                background: #2ecc71;
+                color: #fff;
+                font-weight: 600;
+                padding: 12px 8px;
+                border-radius: 4px 4px 0 0;
+                font-size: 1rem;
+            }
+            td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #e0e0e0;
+                font-size: 1rem;
+            }
+            tr.item-row:nth-child(even) td {
+                background: #f8f9fa;
+            }
+            .total-row td {
+                font-weight: bold;
+                background: #eafaf1;
+                color: #27ae60;
+                font-size: 1.1rem;
+                border-top: 2px solid #2ecc71;
+            }
+            .footer {
+                margin-top: 30px;
+                text-align: center;
+                color: #888;
+                font-size: 0.98rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="invoice-box">
+            <div class="header">
+                <div class="logo">🛠 ToolSoft</div>
+                <div class="invoice-info">
+                    Factura #: INV-20250626-0037<br>
+                    Fecha: 26/06/2025 02:31:34
+                </div>
+            </div>
+            <div class="info-section">
+                <div class="info-box">
+                    <div class="info-title">Datos de la empresa</div>
+                    ToolSoft, Inc.<br>
+                    Calle Principal #123<br>
+                    Ciudad, CP 12345<br>
+                    Tel: (123) 456-7890<br>
+                    Email: info@toolsoft.com
+                </div>
+                <div class="info-box">
+                    <div class="info-title">Datos del cliente</div>
+                    almanza<br>
+                    Almanzasalinas123@gmail.com<br>
+                    <br>
+                    
+                </div>
+            </div>
+            <table>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+                <tr class="item-row">
+                    <td>torrnillo</td>
+                    <td>$3,000.00</td>
+                    <td>1</td>
+                    <td>$3,000.00</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align:right;">Total:</td>
+                    <td>$3,000.00</td>
+                </tr>
+            </table>
+            <div class="footer">
+                Gracias por tu compra en ToolSoft.<br>
+                Si tienes alguna pregunta, contáctanos.<br>
+                <span style="color:#bbb;">Esta factura fue generada automáticamente el 26/06/2025 02:31:34</span>
+            </div>
+        </div>
+    </body>
+    </html>

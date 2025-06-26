@@ -1,4 +1,8 @@
 <?php
+// No debe haber espacios ni salida antes de este PHP
+require_once __DIR__ . '/vendor/autoload.php';
+use Dompdf\Dompdf;
+
 session_start();
 
 // Security headers
@@ -13,37 +17,25 @@ if (!isset($_SESSION['customer_logged_in'])) {
     exit;
 }
 
-// Get invoice number from URL
-$invoice_number = isset($_GET['invoice']) ? $_GET['invoice'] : '';
-
-if (empty($invoice_number)) {
-    $_SESSION['error_message'] = "Número de factura no válido.";
-    header('Location: customer_dashboard.php');
-    exit;
+// Obtener el HTML de la factura desde la sesión
+if (!isset($_SESSION['invoice_html']) || !isset($_SESSION['invoice_number'])) {
+    header('Content-Type: text/plain; charset=utf-8');
+    die('No hay factura disponible para descargar.');
 }
 
-// Sanitize invoice number
-$invoice_number = preg_replace('/[^a-zA-Z0-9\-_]/', '', $invoice_number);
+$invoice_html = $_SESSION['invoice_html'];
+$invoice_number = $_SESSION['invoice_number'];
 
-// Check if invoice file exists
-$facturas_dir = __DIR__ . '/facturas/';
-$file_path = $facturas_dir . 'factura_' . $invoice_number . '.html';
-
-if (!file_exists($file_path)) {
-    $_SESSION['error_message'] = "Factura no encontrada: " . $invoice_number;
-    header('Location: customer_dashboard.php');
+try {
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($invoice_html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    $dompdf->stream("Factura_$invoice_number.pdf", ["Attachment" => true]);
+    exit;
+} catch (Exception $e) {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "Error al generar el PDF: " . $e->getMessage();
     exit;
 }
-
-// Set headers for download
-header('Content-Type: text/html; charset=utf-8');
-header('Content-Disposition: attachment; filename="Factura_' . $invoice_number . '.html"');
-header('Content-Length: ' . filesize($file_path));
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
-
-// Output the file
-readfile($file_path);
-exit;
 ?>

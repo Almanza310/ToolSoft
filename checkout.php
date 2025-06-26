@@ -214,7 +214,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_payment'])) {
  */
 function generateInvoiceHTML($invoice_number, $customer_name, $customer_email, $customer_address, $customer_phone, $cart_items, $total) {
     $date = date('d/m/Y H:i:s');
-    
+    // Ruta absoluta para Dompdf (requiere ruta absoluta en servidor local)
+    $logo_path = __DIR__ . '/uploads/ferre.png';
+    $logo_base64 = '';
+    if (file_exists($logo_path)) {
+        $logo_data = file_get_contents($logo_path);
+        $logo_base64 = 'data:image/png;base64,' . base64_encode($logo_data);
+    }
     $html = '
     <!DOCTYPE html>
     <html>
@@ -222,98 +228,154 @@ function generateInvoiceHTML($invoice_number, $customer_name, $customer_email, $
         <meta charset="UTF-8">
         <title>Factura #' . $invoice_number . '</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-            .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; line-height: 24px; }
-            .invoice-box table { width: 100%; line-height: inherit; text-align: left; }
-            .invoice-box table td { padding: 5px; vertical-align: top; }
-            .invoice-box table tr td:nth-child(2) { text-align: right; }
-            .invoice-box table tr.top table td { padding-bottom: 20px; }
-            .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; }
-            .invoice-box table tr.information table td { padding-bottom: 40px; }
-            .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; }
-            .invoice-box table tr.details td { padding-bottom: 20px; }
-            .invoice-box table tr.item td { border-bottom: 1px solid #eee; }
-            .invoice-box table tr.item.last td { border-bottom: none; }
-            .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; }
-            @media only screen and (max-width: 600px) {
-                .invoice-box table tr.top table td { width: 100%; display: block; text-align: center; }
-                .invoice-box table tr.information table td { width: 100%; display: block; text-align: center; }
+            body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #f6f8fa; }
+            .invoice-box { max-width: 750px; margin: 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(46,204,113,0.10); padding: 36px 32px 28px 32px; }
+            .header {
+                background: #2ecc71;
+                color: #fff;
+                padding: 18px 32px;
+                border-radius: 10px 10px 0 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .logo-img {
+                height: 48px;
+                margin-right: 10px;
+                vertical-align: middle;
+                border-radius: 8px;
+                background: #fff;
+                box-shadow: 0 2px 8px rgba(46,204,113,0.10);
+            }
+            .header .logo-text {
+                font-size: 2.1rem;
+                font-weight: bold;
+                letter-spacing: 1px;
+                font-family: Arial Black, Arial, sans-serif;
+            }
+            .header .invoice-info {
+                text-align: right;
+                font-size: 1rem;
+            }
+            .info-section {
+                display: flex;
+                justify-content: space-between;
+                margin: 30px 0 18px 0;
+                font-size: 1rem;
+            }
+            .info-box {
+                width: 48%;
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 16px 18px;
+                color: #333;
+            }
+            .info-title {
+                font-weight: bold;
+                color: #2ecc71;
+                margin-bottom: 6px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 18px;
+            }
+            th {
+                background: #2ecc71;
+                color: #fff;
+                font-weight: 600;
+                padding: 12px 8px;
+                border-radius: 4px 4px 0 0;
+                font-size: 1rem;
+            }
+            td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #e0e0e0;
+                font-size: 1rem;
+            }
+            tr.item-row:nth-child(even) td {
+                background: #f8f9fa;
+            }
+            .total-row td {
+                font-weight: bold;
+                background: #eafaf1;
+                color: #27ae60;
+                font-size: 1.1rem;
+                border-top: 2px solid #2ecc71;
+            }
+            .footer {
+                margin-top: 30px;
+                text-align: center;
+                color: #888;
+                font-size: 0.98rem;
             }
         </style>
     </head>
     <body>
         <div class="invoice-box">
-            <table cellpadding="0" cellspacing="0">
-                <tr class="top">
-                    <td colspan="4">
-                        <table>
-                            <tr>
-                                <td class="title">
-                                    <h1>🛠 ToolSoft</h1>
-                                </td>
-                                <td>
-                                    Factura #: ' . $invoice_number . '<br>
-                                    Fecha: ' . $date . '<br>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                
-                <tr class="information">
-                    <td colspan="4">
-                        <table>
-                            <tr>
-                                <td>
-                                    ToolSoft, Inc.<br>
-                                    Calle Principal #123<br>
-                                    Ciudad, CP 12345<br>
-                                    Tel: (123) 456-7890<br>
-                                    Email: info@toolsoft.com
-                                </td>
-                                <td>
-                                    ' . htmlspecialchars($customer_name) . '<br>
-                                    ' . htmlspecialchars($customer_email) . '<br>
-                                    ' . htmlspecialchars($customer_address) . '<br>
-                                    ' . htmlspecialchars($customer_phone) . '
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                
-                <tr class="heading">
-                    <td>Producto</td>
-                    <td>Precio</td>
-                    <td>Cantidad</td>
-                    <td>Subtotal</td>
+            <div class="header">
+                <div class="header-left">
+                    ' . ($logo_base64 ? '<img src="' . $logo_base64 . '" class="logo-img" alt="Logo ToolSoft">' : '') . '
+                    <span class="logo-text">ToolSoft</span>
+                </div>
+                <div class="invoice-info">
+                    Factura #: ' . $invoice_number . '<br>
+                    Fecha: ' . $date . '
+                </div>
+            </div>
+            <div class="info-section">
+                <div class="info-box">
+                    <div class="info-title">Datos de la empresa</div>
+                    ToolSoft, Inc.<br>
+                    Calle Principal #123<br>
+                    Ciudad, CP 12345<br>
+                    Tel: (123) 456-7890<br>
+                    Email: info@toolsoft.com
+                </div>
+                <div class="info-box">
+                    <div class="info-title">Datos del cliente</div>
+                    ' . htmlspecialchars($customer_name) . '<br>
+                    ' . htmlspecialchars($customer_email) . '<br>
+                    ' . htmlspecialchars($customer_address) . '<br>
+                    ' . htmlspecialchars($customer_phone) . '
+                </div>
+            </div>
+            <table>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
                 </tr>';
-    
     foreach ($cart_items as $item) {
         $subtotal = $item['price'] * $item['quantity'];
         $html .= '
-                <tr class="item">
+                <tr class="item-row">
                     <td>' . htmlspecialchars($item['name']) . '</td>
                     <td>$' . number_format($item['price'], 2) . '</td>
                     <td>' . $item['quantity'] . '</td>
                     <td>$' . number_format($subtotal, 2) . '</td>
                 </tr>';
     }
-    
     $html .= '
-                <tr class="total">
-                    <td colspan="3"></td>
-                    <td>Total: $' . number_format($total, 2) . '</td>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align:right;">Total:</td>
+                    <td>$' . number_format($total, 2) . '</td>
                 </tr>
             </table>
-            <div style="margin-top: 30px; text-align: center; color: #777;">
-                <p>Gracias por tu compra en ToolSoft. Si tienes alguna pregunta, contáctanos.</p>
-                <p>Esta factura fue generada automáticamente el ' . $date . '</p>
+            <div class="footer">
+                Gracias por tu compra en ToolSoft.<br>
+                Si tienes alguna pregunta, contáctanos.<br>
+                <span style="color:#bbb;">Esta factura fue generada automáticamente el ' . $date . '</span>
             </div>
         </div>
     </body>
     </html>';
-    
     return $html;
 }
 
@@ -352,7 +414,7 @@ function saveInvoiceToFile($invoice_number, $invoice_html) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💳 Proceder al Pago - ToolSoft</title>
+    <title>🛒 Checkout - ToolSoft</title>
     <link rel="stylesheet" href="CSS/stylescheckout.css">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -363,111 +425,68 @@ function saveInvoiceToFile($invoice_number, $invoice_html) {
         <div class="logo">🛠 ToolSoft</div>
         <nav>
             <a href="interfaz_prototipo.php">Inicio</a>
-            <a href="contacto.php">Contacto</a>
             <a href="customer_products.php">Productos</a>
-            <a href="cart.php" class="cart-link">
-                <span class="cart-icon">🛒</span> Carrito
-            </a>
-            <?php if (isset($_SESSION['customer_logged_in'])): ?>
-                <a href="customer_dashboard.php">Mi Perfil</a>
-                <a href="force_logout.php">Cerrar Sesión</a>
-            <?php else: ?>
-                <a href="logeo_del_prototipo.php">Inicia Sesión</a>
-            <?php endif; ?>
+            <a href="contacto.php">Contacto</a>
+            <a href="cart.php" class="cart-link"><span class="cart-icon">🛒</span> Carrito</a>
         </nav>
     </header>
-
     <div class="checkout-container">
-        <h2 class="checkout-title">💳 Proceder al Pago</h2>
-        
+        <h1 class="checkout-title">🧾 Confirmar Pedido</h1>
         <div class="order-summary">
-            <h3>📋 Resumen del Pedido</h3>
-            <table>
+            <h3>Resumen de tu pedido</h3>
+            <table class="cart-table" id="checkout-table">
                 <thead>
                     <tr>
-                        <th>Producto</th>
                         <th>Imagen</th>
+                        <th>Producto</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
                         <th>Subtotal</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($_SESSION['cart'] as $name => $item): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($item['name']); ?></td>
-                            <td>
-                                <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['name']); ?>"
-                                     onerror="this.src='imagenes/placeholder.jpg'">
-                            </td>
-                            <td>$<?php echo number_format($item['price'], 2); ?></td>
-                            <td><?php echo $item['quantity']; ?></td>
-                            <td>$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php foreach ($_SESSION['cart'] as $item): ?>
+                    <tr data-name="<?php echo htmlspecialchars($item['name']); ?>">
+                        <td><img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="cart-img"></td>
+                        <td><?php echo htmlspecialchars($item['name']); ?></td>
+                        <td>$<?php echo number_format($item['price'], 2); ?></td>
+                        <td>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" type="button">-</button>
+                                <input type="number" class="quantity-input" min="1" value="<?php echo $item['quantity']; ?>">
+                                <button class="quantity-btn plus" type="button">+</button>
+                            </div>
+                        </td>
+                        <td class="item-subtotal">$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
+                        <td>
+                            <button class="remove-btn" type="button" title="Eliminar"><span style="font-size:1.2em;">🗑️</span></button>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
                 </tbody>
             </table>
-            <div class="total">
-                Total: $<?php echo number_format($total, 2); ?>
-            </div>
+            <div class="total"><span style="font-size:1.3em;">💵</span> Total: <span id="checkout-total">$<?php echo number_format($total, 2); ?></span></div>
         </div>
-        
         <div class="customer-info">
-            <h3>👤 Información del Cliente</h3>
-            <p><strong>Nombre:</strong> <?php echo htmlspecialchars($customer_name); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($customer_email); ?></p>
-            <p><strong>Dirección:</strong> <?php echo htmlspecialchars($customer_address); ?></p>
-            <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($customer_phone); ?></p>
-            <p class="info-note">* La factura será generada y estará disponible para descargar</p>
+            <h3>Datos de envío</h3>
+            <ul>
+                <li><b>Nombre:</b> <?php echo htmlspecialchars($customer_name); ?></li>
+                <li><b>Email:</b> <?php echo htmlspecialchars($customer_email); ?></li>
+                <li><b>Dirección:</b> <?php echo htmlspecialchars($customer_address); ?></li>
+                <li><b>Teléfono:</b> <?php echo htmlspecialchars($customer_phone); ?></li>
+            </ul>
         </div>
-        
         <div class="payment-section">
-            <h3>💰 Confirmar Pago</h3>
-            <p>Este es un proceso de pago simulado. Haz clic en "Confirmar Pago" para completar tu pedido y generar la factura.</p>
-            <form method="POST" action="checkout.php" id="payment-form">
-                <button type="submit" name="confirm_payment" class="confirm-btn" id="confirm-btn">
-                    ✅ Confirmar Pago
-                </button>
+            <form id="checkout-form" method="post">
+                <input type="hidden" name="confirm_payment" value="1">
+                <button type="submit" class="confirm-btn">Confirmar compra</button>
             </form>
+            <a href="cart.php" class="continue-btn">Volver al carrito</a>
         </div>
+        <div id="checkout-message"></div>
     </div>
-    
-    <script>
-        // Prevenir envío múltiple del formulario
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            var submitBtn = document.getElementById('confirm-btn');
-            
-            // Verificar si el botón ya está deshabilitado
-            if (submitBtn.disabled) {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Deshabilitar el botón y cambiar el texto
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Procesando...';
-            submitBtn.style.opacity = '0.7';
-            
-            // Mostrar mensaje de procesamiento
-            setTimeout(function() {
-                if (submitBtn.disabled) {
-                    submitBtn.textContent = '🔄 Generando factura...';
-                }
-            }, 1000);
-        });
-        
-        // Agregar efecto hover a los elementos de la tabla
-        document.querySelectorAll('.order-summary tbody tr').forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                this.style.backgroundColor = '#f8f9fa';
-            });
-            
-            row.addEventListener('mouseleave', function() {
-                this.style.backgroundColor = '';
-            });
-        });
-    </script>
+    <script src="checkout.js"></script>
 </body>
 </html>
 <?php $conexion->close(); ?>
