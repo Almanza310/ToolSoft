@@ -199,6 +199,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'profile';
         <div class="dashboard-tabs">
             <a href="?tab=profile" class="dashboard-tab <?php echo $active_tab === 'profile' ? 'active' : ''; ?>">Mi Perfil</a>
             <a href="?tab=orders" class="dashboard-tab <?php echo $active_tab === 'orders' ? 'active' : ''; ?>">Mis Pedidos</a>
+            <a href="?tab=mensajes" class="dashboard-tab <?php echo $active_tab === 'mensajes' ? 'active' : ''; ?>">Mis Mensajes</a>
         </div>
         
         <div class="dashboard-content">
@@ -279,6 +280,8 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'profile';
                         </tbody>
                     </table>
                 <?php endif; ?>
+            <?php elseif ($active_tab === 'mensajes'): ?>
+                <?php include 'customer_messages.php'; ?>
             <?php endif; ?>
         </div>
     </div>

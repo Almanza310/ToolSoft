@@ -130,6 +130,7 @@ header nav a:hover {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 
 .input-group:focus-within {
@@ -140,6 +141,28 @@ header nav a:hover {
     font-size: 1.2rem;
     margin-right: 8px;
     color: #2ecc71;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    color: #888;
+    cursor: pointer;
+    user-select: none;
+    z-index: 3;
+    transition: color 0.18s;
+}
+
+.toggle-password:hover {
+    color: #2ecc71;
+}
+
+.input-group input[type="password"],
+.input-group input[type="text"] {
+    padding-right: 38px;
 }
 
 .login-form input {

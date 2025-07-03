@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['customer_logged_in'])) {
+    header('Location: logeo_del_prototipo.php?redirect=contacto.php');
+    exit;
+}
+
 require_once 'conexion.php';
 
 $mensaje = '';
@@ -61,18 +67,34 @@ $conexion->close();
       <?php endif; ?>
 
       <form method="post">
-        <input type="text" name="name" placeholder="Nombre completo" required />
-        <input type="email" name="email" placeholder="Correo electrónico" required />
-        <input type="text" name="subject" placeholder="Asunto" required />
-        <textarea name="message" placeholder="Tu mensaje" required></textarea>
-        <button type="submit">Enviar Mensaje</button>
-      </form>
+<?php if (isset($_SESSION['customer_logged_in'])): ?>
+    <input type="hidden" name="name" value="<?php echo htmlspecialchars($_SESSION['customer_name']); ?>" />
+    <input type="hidden" name="email" value="<?php echo htmlspecialchars($_SESSION['customer_email']); ?>" />
+<?php else: ?>
+    <div class="input-icon"><span class="icon">👤</span><input type="text" name="name" placeholder="Nombre completo" required /></div>
+    <div class="input-icon"><span class="icon">✉️</span><input type="email" name="email" placeholder="Correo electrónico" required /></div>
+<?php endif; ?>
+    <div class="input-icon"><span class="icon">📝</span><input type="text" name="subject" placeholder="Asunto" required /></div>
+    <div class="input-icon"><span class="icon">💬</span><textarea name="message" placeholder="Tu mensaje" required></textarea></div>
+    <button type="submit">Enviar Mensaje</button>
+  </form>
 
       <div class="footer">
         ToolSoft © 2025 - Todos los derechos reservados.
       </div>
     </div>
   </div>
+
+<script>
+  document.querySelectorAll('.input-icon input, .input-icon textarea').forEach(function(input) {
+    input.addEventListener('focus', function() {
+      this.parentElement.classList.add('focused');
+    });
+    input.addEventListener('blur', function() {
+      this.parentElement.classList.remove('focused');
+    });
+  });
+</script>
 
 </body>
 </html>

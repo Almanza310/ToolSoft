@@ -27,6 +27,10 @@ if (!isset($_SESSION['csrf_token'])) {
 
 $mensaje = '';
 
+if (isset($_GET['redirect'])) {
+    $_SESSION['redirect_after_login'] = $_GET['redirect'];
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate CSRF token
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -171,6 +175,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             setTimeout(() => message.remove(), 300);
         }
     }, 5000);
+    // Mostrar/ocultar contraseña (asignar evento directamente con log)
+    var toggle = document.querySelector('.toggle-password');
+    var pwd = document.getElementById('password-field');
+    if (toggle && pwd) {
+      toggle.addEventListener('click', function() {
+        console.log('👁️ Click detectado');
+        if (pwd.type === 'password') {
+          pwd.type = 'text';
+          this.textContent = '🙈';
+        } else {
+          pwd.type = 'password';
+          this.textContent = '👁️';
+        }
+      });
+    } else {
+      console.log('No se encontró el input o el ojito');
+    }
   </script>
 </body>
 </html>

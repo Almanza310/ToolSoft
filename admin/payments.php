@@ -1,10 +1,94 @@
 <?php
 require_once __DIR__ . '/../conexion.php';
-session_start();
+// session_start solo si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Seguridad: solo admins
 if (!isset($_SESSION['admin_logged_in'])) {
     header('Location: ../logeo_del_prototipo.php');
+    exit;
+}
+
+// Procesar eliminación de pago
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+    $sale_id = (int)$_GET['delete'];
+    
+    // Verificar que la venta existe
+    $check_query = "SELECT id FROM sale WHERE id = ?";
+    $check_stmt = $conexion->prepare($check_query);
+    $check_stmt->bind_param('i', $sale_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    
+    if ($check_result->num_rows > 0) {
+        // Eliminar detalles de la venta primero
+        $delete_details_query = "DELETE FROM saledetail WHERE sale_id = ?";
+        $delete_details_stmt = $conexion->prepare($delete_details_query);
+        $delete_details_stmt->bind_param('i', $sale_id);
+        $delete_details_stmt->execute();
+        
+        // Eliminar la venta
+        $delete_sale_query = "DELETE FROM sale WHERE id = ?";
+        $delete_sale_stmt = $conexion->prepare($delete_sale_query);
+        $delete_sale_stmt->bind_param('i', $sale_id);
+        
+        if ($delete_sale_stmt->execute()) {
+            $_SESSION['success_message'] = "Pago eliminado exitosamente.";
+        } else {
+            $_SESSION['error_message'] = "Error al eliminar el pago.";
+        }
+    } else {
+        $_SESSION['error_message'] = "Pago no encontrado.";
+    }
+    
+    // Redirigir para evitar reenvío del formulario
+    header('Location: ../admin_dashboard.php?tab=pagos');
+    exit;
+}
+
+// Procesar exportación a Excel
+if (isset($_GET['export']) && $_GET['export'] === 'excel') {
+    // Configurar headers para descarga de Excel
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment; filename="pagos_' . date('Y-m-d') . '.xls"');
+    header('Cache-Control: max-age=0');
+    
+    // Obtener datos sin límite para exportación
+    $export_query = "
+    SELECT s.id AS sale_id, s.date, s.total, s.user_id, s.admin_id,
+           u.name AS customer_name, u.email AS customer_email
+    FROM sale s
+    JOIN users u ON s.user_id = u.id
+    ORDER BY s.date DESC
+    ";
+    
+    $export_stmt = $conexion->prepare($export_query);
+    $export_stmt->execute();
+    $export_result = $export_stmt->get_result();
+    
+    // Crear contenido del Excel
+    echo "<table border='1'>";
+    echo "<tr>";
+    echo "<th># Factura</th>";
+    echo "<th>Cliente</th>";
+    echo "<th>Email</th>";
+    echo "<th>Fecha</th>";
+    echo "<th>Total</th>";
+    echo "</tr>";
+    
+    while ($row = $export_result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>INV-" . date('Ymd', strtotime($row['date'])) . "-" . str_pad($row['sale_id'], 4, '0', STR_PAD_LEFT) . "</td>";
+        echo "<td>" . htmlspecialchars($row['customer_name']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['customer_email']) . "</td>";
+        echo "<td>" . date('d/m/Y H:i', strtotime($row['date'])) . "</td>";
+        echo "<td>$" . number_format($row['total'], 2) . "</td>";
+        echo "</tr>";
+    }
+    
+    echo "</table>";
     exit;
 }
 
@@ -59,166 +143,31 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Pagos de Clientes - Admin | ToolSoft</title>
     <link rel="stylesheet" href="../CSS/stylesadmin.css">
-    <style>
-        body { background: linear-gradient(to right, #dffcf3, #f1fff8); }
-        .main-content {
-            background: white;
-            padding: 30px;
-            margin: 30px auto;
-            border-radius: 18px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-height: calc(100vh - 140px);
-            width: 95vw;
-            max-width: 1200px;
-            box-sizing: border-box;
-            overflow-x: auto;
-        }
-        .main-title {
-            color: #2ecc71;
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 18px;
-        }
-        .filters-form {
-            display: flex;
-            gap: 18px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-        .filters-form label {
-            font-weight: 500;
-            color: #2ecc71;
-            display: flex;
-            flex-direction: column;
-            font-size: 1rem;
-        }
-        .filters-form input[type="text"], .filters-form input[type="date"] {
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-            margin-top: 4px;
-        }
-        .filters-form button {
-            background: #2ecc71;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 22px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .filters-form button:hover { background: #27ae60; }
-        .filters-form .clear-link {
-            background: #fff;
-            color: #2ecc71;
-            border: 2px solid #2ecc71;
-            border-radius: 8px;
-            padding: 10px 22px;
-            font-weight: 500;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: background 0.2s, color 0.2s;
-            margin-left: 10px;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .filters-form .clear-link:hover {
-            background: #2ecc71;
-            color: #fff;
-            text-decoration: none;
-        }
-        .payments-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 18px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(46,204,113,0.08);
-            overflow: hidden;
-        }
-        .payments-table th, .payments-table td {
-            padding: 14px 10px;
-            border-bottom: 1px solid #e0e0e0;
-            text-align: center;
-        }
-        .payments-table th {
-            background: #2ecc71;
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-        .payments-table tr:last-child td { border-bottom: none; }
-        .view-btn {
-            background: #2ecc71;
-            color: #fff !important;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 22px;
-            text-decoration: none !important;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: background 0.2s;
-            margin: 6px 0;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-        }
-        .view-btn:hover {
-            background: #27ae60;
-            color: #fff !important;
-            text-decoration: none !important;
-        }
-        .delete-btn {
-            background: #e74c3c;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: background 0.2s;
-            border: none;
-            display: inline-block;
-        }
-        .delete-btn:hover {
-            background: #c0392b;
-            color: #fff;
-        }
-        @media (max-width: 900px) {
-            .main-content { padding: 16px 4px 10px 4px; }
-            .filters-form { flex-direction: column; gap: 10px; }
-            .payments-table th, .payments-table td { font-size: 0.97rem; padding: 8px 4px; }
-        }
-    </style>
+    <link rel="stylesheet" href="../CSS/stylespayments.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Admin</h3>
-        <a href="../admin_dashboard.php">Dashboard</a>
-        <a href="../admin_dashboard.php?tab=usuarios">Usuarios</a>
-        <a href="../admin_dashboard.php?tab=categorias">Categorías</a>
-        <a href="../admin_dashboard.php?tab=proveedores">Proveedores</a>
-        <a href="../admin_dashboard.php?tab=sales">Productos</a>
-        <a href="../admin_dashboard.php?tab=ventas">Historial Ventas</a>
-        <a href="payments.php" class="active">Pagos</a>
-        <a href="#">Facturas</a>
-        <a href="#">Cooperativas</a>
-        <a href="#">Análisis de Precios</a>
-        <a href="../force_logout.php">Cerrar Sesión</a>
-    </div>
     <div class="main-content">
         <div class="main-title">Pagos de Clientes</div>
+        
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="success-message">
+                <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+            </div>
+            <?php unset($_SESSION['success_message']); ?>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="error-message">
+                <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+            </div>
+            <?php unset($_SESSION['error_message']); ?>
+        <?php endif; ?>
+        
         <div style="display:flex; justify-content: flex-end; margin-bottom: 18px;">
-            <a href="payments.php?export=excel" class="export-btn">Exportar a Excel</a>
+            <a href="../admin_dashboard.php?tab=pagos&export=excel" class="export-btn">Exportar a Excel</a>
         </div>
-        <form class="filters-form" method="get">
+        <form class="filters-form" method="get" action="../admin_dashboard.php">
+            <input type="hidden" name="tab" value="pagos">
             <label>Buscar cliente/email
                 <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Nombre o email">
             </label>
@@ -228,8 +177,10 @@ $result = $stmt->get_result();
             <label>Hasta
                 <input type="date" name="date_to" value="<?php echo htmlspecialchars($date_to); ?>">
             </label>
-            <button type="submit">Filtrar</button>
-            <a href="payments.php" class="clear-link">Limpiar</a>
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <button type="submit">Filtrar</button>
+                <a href="../admin_dashboard.php?tab=pagos" class="clear-link">Limpiar</a>
+            </div>
         </form>
         <div class="table-responsive">
             <table class="payments-table">
@@ -257,7 +208,7 @@ $result = $stmt->get_result();
                                     <a href="../download_invoice.php?invoice=INV-<?php echo date('Ymd', strtotime($row['date'])); ?>-<?php echo str_pad($row['sale_id'], 4, '0', STR_PAD_LEFT); ?>" class="view-btn" target="_blank">
                                         <span style="font-size:1.2em;">📄</span> Ver Factura
                                     </a>
-                                    <a href="payments.php?delete=<?php echo $row['sale_id']; ?>" class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este pago? Esta acción no se puede deshacer.');">
+                                    <a href="../admin_dashboard.php?tab=pagos&delete=<?php echo $row['sale_id']; ?>" class="delete-btn" onclick="return confirm('¿Seguro que deseas eliminar este pago? Esta acción no se puede deshacer.');">
                                         <span style="font-size:1.2em;">🗑️</span> Eliminar
                                     </a>
                                 </div>
@@ -269,9 +220,6 @@ $result = $stmt->get_result();
                 <?php endif; ?>
                 </tbody>
             </table>
-        </div>
-        <div style="margin-top:40px; text-align:center; color:#888; font-size:0.98rem;">
-            ToolSoft © 2025 - Todos los derechos reservados.
         </div>
     </div>
 </body>

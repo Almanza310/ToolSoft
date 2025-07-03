@@ -1,0 +1,89 @@
+/* Estilos para la bandeja de mensajes del cliente - versión elegante */
+.main-messages {
+    max-width: 950px;
+    margin: 48px auto;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 6px 32px rgba(46,204,113,0.10);
+    padding: 44px 32px 36px 32px;
+}
+.main-messages h2 {
+    color: #2ecc71;
+    font-size: 2.3rem;
+    margin-bottom: 28px;
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+.messages-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(46,204,113,0.04);
+    overflow: hidden;
+}
+.messages-table th, .messages-table td {
+    padding: 18px 22px;
+    border-bottom: 1.5px solid #e0e0e0;
+    border-right: 1.5px solid #e6e6e6;
+    font-size: 1.12rem;
+}
+.messages-table th:last-child, .messages-table td:last-child {
+    border-right: none;
+}
+.messages-table th {
+    background: #2ecc71;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.7px;
+    text-align: center;
+    border-top: none;
+}
+.messages-table td {
+    background: #fff;
+    color: #222;
+    vertical-align: top;
+    text-align: center;
+}
+.messages-table tr:nth-child(even) td {
+    background: #f8fdfb;
+}
+.messages-table tr:last-child td {
+    border-bottom: none;
+}
+.admin-reply {
+    background: linear-gradient(90deg, #2ecc71 80%, #27ae60 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 10px 22px;
+    margin-top: 6px;
+    display: inline-block;
+    font-size: 1.08rem;
+    font-weight: 600;
+    box-shadow: 0 1px 6px rgba(46,204,113,0.10);
+    border: none;
+}
+.no-reply {
+    background: #e67e22;
+    color: #fff;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-weight: 600;
+    display: inline-block;
+    font-size: 1.08rem;
+    box-shadow: 0 1px 6px rgba(230,126,34,0.10);
+    border: none;
+}
+.messages-table td[colspan] {
+    text-align: center;
+    color: #888;
+}
+@media (max-width: 900px) {
+    .main-messages { padding: 12px 2px 8px 2px; }
+    .messages-table th, .messages-table td { font-size: 0.97rem; padding: 8px 4px; }
+    .main-messages h2 { font-size: 1.3rem; }
+} 

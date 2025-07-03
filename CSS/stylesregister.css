@@ -59,6 +59,55 @@ nav a:hover {
   margin-bottom: 2rem;
 }
 
+.input-icon {
+  display: flex;
+  align-items: center;
+  background: #f9fefb;
+  border-radius: 12px;
+  border: 1.5px solid #e0e0e0;
+  margin-bottom: 1.3rem;
+  padding: 0 16px;
+  box-shadow: 0 2px 8px rgba(46,204,113,0.06);
+  transition: border 0.22s, box-shadow 0.22s, background 0.22s;
+}
+
+.input-icon.focused {
+  border: 1.5px solid #2ecc71;
+  background: #eafff2;
+  box-shadow: 0 4px 16px rgba(46,204,113,0.10);
+}
+
+.input-icon .icon {
+  font-size: 1.55rem;
+  margin-right: 14px;
+  color: #b2dfdb;
+  min-width: 32px;
+  text-align: center;
+  transition: color 0.22s, transform 0.22s;
+}
+
+.input-icon.focused .icon {
+  color: #2ecc71;
+  transform: scale(1.15) translateY(-2px);
+}
+
+.input-icon input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 14px 0;
+  font-size: 1.08rem;
+  border-radius: 0 12px 12px 0;
+  color: #222;
+}
+
+.input-icon input::placeholder {
+  color: #bdbdbd;
+  opacity: 1;
+  font-size: 1.01rem;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -80,11 +129,29 @@ button {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s, box-shadow 0.22s, transform 0.12s;
+  box-shadow: 0 2px 8px rgba(46,204,113,0.10);
+  font-weight: 600;
 }
 
 button:hover {
   background-color: #27ae60;
+  box-shadow: 0 6px 18px rgba(46,204,113,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+
+button:active {
+  background-color: #219150;
+  box-shadow: 0 2px 8px rgba(46,204,113,0.10);
+  transform: scale(0.97) translateY(1px);
+  animation: bounce 0.22s;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1) translateY(0); }
+  30% { transform: scale(0.97) translateY(2px); }
+  60% { transform: scale(1.04) translateY(-2px); }
+  100% { transform: scale(1) translateY(0); }
 }
 
 .login {
@@ -106,9 +173,22 @@ button:hover {
   margin-bottom: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .container {
-    margin: 40px 20px;
-    padding: 2rem;
+    padding: 1.2rem;
+    min-height: unset;
+  }
+  .input-icon {
+    padding: 0 8px;
+    margin-bottom: 1rem;
+  }
+  .input-icon .icon {
+    font-size: 1.2rem;
+    min-width: 22px;
+    margin-right: 7px;
+  }
+  .input-icon input {
+    font-size: 0.98rem;
+    padding: 10px 0;
   }
 }

@@ -1,0 +1,246 @@
+/* Estilos específicos para la vista de pagos del administrador */
+body { 
+    background: linear-gradient(to right, #dffcf3, #f1fff8); 
+}
+
+.main-content {
+    background: white;
+    padding: 40px 36px 36px 36px;
+    margin: 40px auto 40px auto;
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    min-height: 400px;
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.main-title {
+    color: #2ecc71;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+}
+
+.filters-form {
+    display: flex;
+    gap: 18px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    background: #f8f9fa;
+    padding: 18px 18px 10px 18px;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(46,204,113,0.07);
+}
+
+.filters-form label {
+    font-weight: 500;
+    color: #2ecc71;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    min-width: 180px;
+}
+
+.filters-form input[type="text"], 
+.filters-form input[type="date"] {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-top: 4px;
+    background: #fff;
+}
+
+.filters-form button {
+    background: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.filters-form button:hover { 
+    background: #27ae60; 
+}
+
+.filters-form .clear-link {
+    background: #fff;
+    color: #2ecc71;
+    border: 2px solid #2ecc71;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.filters-form .clear-link:hover {
+    background: #2ecc71;
+    color: #fff;
+    text-decoration: none;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.payments-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 18px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(46,204,113,0.08);
+}
+
+.payments-table th, 
+.payments-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+.payments-table th {
+    background: #2ecc71;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.08rem;
+    letter-spacing: 0.5px;
+}
+
+.payments-table td {
+    background: #fff;
+    color: #222;
+    vertical-align: top;
+}
+
+.payments-table td[colspan] {
+    text-align: center;
+    color: #888;
+}
+
+.payments-table tr:last-child td { 
+    border-bottom: none; 
+}
+
+.payments-table td:nth-child(4) {
+    max-width: 320px;
+    white-space: pre-line;
+    word-break: break-word;
+    text-align: left;
+}
+
+.view-btn {
+    background: #2ecc71;
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    text-decoration: none !important;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.2s;
+    margin: 6px 0;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.view-btn:hover {
+    background: #27ae60;
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.2s;
+    border: none;
+    display: inline-block;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+    color: #fff;
+}
+
+.export-btn {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.2s;
+    display: inline-block;
+}
+
+.export-btn:hover {
+    background: #2980b9;
+    color: #fff;
+    text-decoration: none;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        padding: 12px 2px 8px 2px;
+        margin: 12px auto;
+        border-radius: 12px;
+    }
+    .filters-form { 
+        flex-direction: column; 
+        gap: 10px; 
+        padding: 10px 6px 6px 6px; 
+    }
+    .payments-table th, 
+    .payments-table td { 
+        font-size: 0.97rem; 
+        padding: 8px 4px; 
+    }
+    .main-title { font-size: 1.3rem; }
+} 

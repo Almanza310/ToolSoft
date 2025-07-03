@@ -110,11 +110,11 @@ $conexion->close();
 
     <form method="post">
       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>" />
-      <input type="text" name="nombre" placeholder="Nombre completo" required />
-      <input type="email" name="email" placeholder="Correo electrónico" required />
-      <input type="password" name="password" placeholder="Contraseña" required />
-      <input type="tel" name="phone" placeholder="Teléfono (opcional)" />
-      <input type="text" name="address" placeholder="Dirección (opcional)" />
+      <div class="input-icon"><span class="icon">👤</span><input type="text" name="nombre" placeholder="Nombre completo" required /></div>
+      <div class="input-icon"><span class="icon">✉️</span><input type="email" name="email" placeholder="Correo electrónico" required /></div>
+      <div class="input-icon"><span class="icon">🔒</span><input type="password" name="password" placeholder="Contraseña" required /></div>
+      <div class="input-icon"><span class="icon">📱</span><input type="tel" name="phone" placeholder="Teléfono (opcional)" /></div>
+      <div class="input-icon"><span class="icon">🏠</span><input type="text" name="address" placeholder="Dirección (opcional)" /></div>
       <button type="submit">Registrarse</button>
     </form>
 
@@ -123,5 +123,16 @@ $conexion->close();
       ToolSoft © 2025 - Todos los derechos reservados.
     </div>
   </div>
+
+  <script>
+    document.querySelectorAll('.input-icon input').forEach(function(input) {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
+  </script>
 </body>
 </html>

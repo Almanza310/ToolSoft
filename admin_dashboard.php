@@ -78,15 +78,15 @@ if ($active_tab === 'proveedores' && $edit_supplier) {
 <body>
     <div class="sidebar">
         <h3>Admin</h3>
-        <a href="admin_dashboard.php" class="<?php echo $active_tab === 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
-        <a href="admin_dashboard.php?tab=usuarios" class="<?php echo $active_tab === 'usuarios' ? 'active' : ''; ?>">Usuarios</a>
-        <a href="admin_dashboard.php?tab=categorias" class="<?php echo $active_tab === 'categorias' ? 'active' : ''; ?>">Categorías</a>
-        <a href="admin_dashboard.php?tab=proveedores" class="<?php echo $active_tab === 'proveedores' ? 'active' : ''; ?>">Proveedores</a>
-        <a href="admin_dashboard.php?tab=sales" class="<?php echo $active_tab === 'sales' ? 'active' : ''; ?>">Productos</a>
-        <a href="admin_dashboard.php?tab=ventas" class="<?php echo $active_tab === 'ventas' ? 'active' : ''; ?>">Historial Ventas</a>
-        <a href="#">Pagos</a>
-        <a href="#">Contactanos</a>
-        <a href="force_logout.php">Cerrar Sesión</a>
+        <a href="admin_dashboard.php" class="<?php echo $active_tab === 'dashboard' ? 'active' : ''; ?>">🏠 Dashboard</a>
+        <a href="admin_dashboard.php?tab=usuarios" class="<?php echo $active_tab === 'usuarios' ? 'active' : ''; ?>">👤 Usuarios</a>
+        <a href="admin_dashboard.php?tab=categorias" class="<?php echo $active_tab === 'categorias' ? 'active' : ''; ?>">🗂️ Categorías</a>
+        <a href="admin_dashboard.php?tab=proveedores" class="<?php echo $active_tab === 'proveedores' ? 'active' : ''; ?>">🏭 Proveedores</a>
+        <a href="admin_dashboard.php?tab=sales" class="<?php echo $active_tab === 'sales' ? 'active' : ''; ?>">🛒 Productos</a>
+        <a href="admin_dashboard.php?tab=ventas" class="<?php echo $active_tab === 'ventas' ? 'active' : ''; ?>">📊 Historial Ventas</a>
+        <a href="admin_dashboard.php?tab=pagos" class="<?php echo $active_tab === 'pagos' ? 'active' : ''; ?>">💳 Pagos</a>
+        <a href="admin_dashboard.php?tab=contactanos" class="<?php echo $active_tab === 'contactanos' ? 'active' : ''; ?>">✉️ Contactanos</a>
+        <a href="force_logout.php">🔓 Cerrar Sesión</a>
     </div>
     <div class="content">
         <?php if ($active_tab === 'dashboard'): ?>
@@ -102,6 +102,10 @@ if ($active_tab === 'proveedores' && $edit_supplier) {
             <?php include 'admin/products.php'; ?>
         <?php elseif ($active_tab === 'ventas'): ?>
             <?php include 'admin/sales_history.php'; ?>
+        <?php elseif ($active_tab === 'pagos'): ?>
+            <?php include 'admin/payments.php'; ?>
+        <?php elseif ($active_tab === 'contactanos'): ?>
+            <?php include 'admin/contact.php'; ?>
         <?php endif; ?>
         <!-- Display Success/Error Messages -->
         <?php if ($success_message): ?>
